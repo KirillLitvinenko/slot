@@ -6,14 +6,17 @@
 </head>
 <body>
 <div class="stage">
+    <h1 id="title">Slot Machine<span id="test-mode-sign" class="test-mode-sign hide">(test mode)</span></h1>
     <div id="rotate" class="slot-screen"></div>
     <h2 class="win-sum-text" id="win-sum-text"></h2>
     <div class="slot-settings">
+        <label for="stake-row">Stake Row</label>
         <select name="winRow" id="stake-row">
             <option value="0">top</option>
             <option value="1" selected>center</option>
             <option value="2">bottom</option>
         </select>
+        <label for="money-input">Money amount</label>
         <input id="money-input" type="number" min="1" max="5000" />
     </div>
     <button id="start-spin" class="spin-button" disabled>SPIN</button>
@@ -40,7 +43,7 @@
                     </div>
                 </template>
             </div>
-            <button id="generate-test">submit</button>
+            <button id="generate-test">Enable test mode</button>
         </div>
     </div>
 </div>

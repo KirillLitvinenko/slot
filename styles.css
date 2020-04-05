@@ -67,6 +67,10 @@
     left: 10%;
     font-size: 30px;
 }
+.test-mode-sign {
+    margin-left: 7px;
+    color: red;
+}
 
 @keyframes blinkingTextAnimation {
     0% {
