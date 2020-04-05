@@ -1,0 +1,92 @@
+.stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.slot-screen {
+    flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+    width: 427px;
+    overflow: hidden;
+}
+.slot-settings {
+    margin: 20px 0;
+}
+.spin-button {
+    width: 300px;
+    height: 50px;
+    font-size: 20px;
+}
+.cell {
+    width: 141px;
+    height: 121px;
+    background: url('assets/css_sprites.png') -10px -10px;
+    border: solid transparent;
+    border-width: 2px 0;
+}
+.win-row {
+    border-color: red;
+}
+.win-row.firstInARow {
+    border-left: 2px solid red;
+}
+.win-row.lastInARow {
+    border-right: 2px solid red;
+}
+.blinking-text {
+    animation: blinkingTextAnimation 0.5s infinite;
+}
+.column-animated {
+    animation: spin 0.1s linear infinite;
+    transform: translate3d(0, 0, 0);
+}
+.test-mode-wrapper {
+    margin-top: 20px;
+    width: 100%;
+}
+.reels {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+}
+.reel {
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+}
+.hide {
+    display: none;
+}
+.select {
+    margin-bottom: 10px;
+}
+.win-sum-text {
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    font-size: 30px;
+}
+
+@keyframes blinkingTextAnimation {
+    0% {
+        color: #000;
+    }
+    49% {
+        color: #000;
+    }
+    60% {
+        color: transparent;
+    }
+    99% {
+        color: transparent;
+    }
+    100% {
+        color: #000;
+    }
+}
+@keyframes spin {
+    100% {
+        transform: translateY(66.6666%);
+    }
+}

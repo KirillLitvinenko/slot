@@ -1,0 +1,48 @@
+<html>
+<head>
+    <link rel="stylesheet" media="all" href="styles.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="script.js"></script>
+</head>
+<body>
+<div class="stage">
+    <div id="rotate" class="slot-screen"></div>
+    <h2 class="win-sum-text" id="win-sum-text"></h2>
+    <div class="slot-settings">
+        <select name="winRow" id="stake-row">
+            <option value="0">top</option>
+            <option value="1" selected>center</option>
+            <option value="2">bottom</option>
+        </select>
+        <input id="money-input" type="number" min="1" max="5000" />
+    </div>
+    <button id="start-spin" class="spin-button" disabled>SPIN</button>
+    <div class="test-mode-wrapper">
+        <input type="checkbox" id="test-mode" />
+        <label for="test-mode">Test Mode</label>
+        <div class="hidden-field hide" id="hidden-field">
+            <div id="test-reels" class="reels">
+                <template id="reel">
+                    <div class="reel">
+                        <select id="reel-position-0" class="select">
+                            <option value="-1">NONE</option>
+                            <option value="0">top</option>
+                            <option value="1">center</option>
+                            <option value="2">bottom</option>
+                        </select>
+                        <select id="reel-value-0" disabled class="select">
+                            <option value="3">BAR</option>
+                            <option value="0">2xBAR</option>
+                            <option value="1">3xBAR</option>
+                            <option value="4">7</option>
+                            <option value="2">CHERRY</option>
+                        </select>
+                    </div>
+                </template>
+            </div>
+            <button id="generate-test">submit</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
