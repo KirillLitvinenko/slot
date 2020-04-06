@@ -1,4 +1,6 @@
 ### Game mode
+To run a game open *index.html* in your browser
+
 To star a game you need to:
 * select *Stake Row* -- row you predict will win
 * change *Money amount* -- amount of money
