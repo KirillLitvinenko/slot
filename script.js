@@ -1,44 +1,43 @@
-var rows = 3;
-var cols = 3;
-var spinDuration = 2000; //duration in ms
-var stopDelay = 500; // stop delay in ms
-var testMatrix = [];
-var testModeBlockShow = false;
+const ROWS = 3;
+const COLS = 3;
+const SPIN_DURATION = 2000; //duration in ms
+const STOP_DELAY = 500; // stop delay in ms
+let testMatrix = [];
+let testModeBlockShow = false;
 
 function createTestModeView() {
-  var testModeElement = $('#test-reels');
-  var template = document.querySelector('#reel');
-  for (var i = 0; i < cols; i++) {
-    var clone = template.content.cloneNode(true);
-    clone.querySelector('#reel-position-0').id = 'reel-position-' + i;
-    clone.querySelector('#reel-value-0').id = 'reel-value-' + i;
-    testModeElement.append(clone);
-    (function(index) {
-      $('#reel-position-' + index).on('change', function(event) {
-        if (parseInt(event.target.value) >= 0) {
-          $('#reel-value-' + index).attr('disabled', false);
-        } else {
-          $('#reel-value-' + index).attr('disabled', true);
-        }
-      })
-    })(i);
+  let testModeElement = $('#test-reels');
+  let template = $('#reel').html();
+  let generatedHtml = '';
+
+  for (let i = 0; i < COLS; i++) {
+    let clone = $(template);
+    clone.find('#reel-position').attr('id', 'reel-position-' + i);
+    clone.find('#reel-value').attr('id', 'reel-value-' + i);
+    generatedHtml = generatedHtml + clone.get(0).outerHTML;
   }
+  testModeElement.append(generatedHtml);
+  $('.select-position').change(function() {
+    $(this).parent().find('.select-value').attr('disabled', parseInt($(this).val()) < 0)
+  });
 }
 
 function generateTestMatrix() {
   testMatrix = [];
-  for (var i = 0; i < cols; i++) {
-    var rowNumber = parseInt($('#reel-position-' + i).val());
-    var cellValue = parseInt($('#reel-value-' + i).val());
+  let rowNumber, cellValue;
+
+  for (let i = 0; i < COLS; i++) {
+    rowNumber = parseInt($('#reel-position-' + i).val());
+    cellValue = parseInt($('#reel-value-' + i).val());
     testMatrix.push({row: rowNumber, cellValue: cellValue});
   }
 }
 
 function generateSpinResult() {
-  var resultMatrix = [];
-  for (var i = 0; i < rows; i++) {
+  let resultMatrix = [];
+  for (let i = 0; i < ROWS; i++) {
     resultMatrix[i] = [];
-    for (var j = 0; j < cols; j++) {
+    for (let j = 0; j < COLS; j++) {
       resultMatrix[i][j] = Math.floor(Math.random() * 5);
     }
   }
@@ -47,14 +46,15 @@ function generateSpinResult() {
 }
 
 function createView() {
-  for (var i = 0; i < cols; i++) {
-    var itemsInColumn = 0;
-    var firstLastClass = '';
+  for (let i = 0; i < COLS; i++) {
+    let itemsInColumn = 0;
+    let firstLastClass = '';
+
     $('#rotate').append('<div class="column" id="column-' + i + '"></div>');
-    while (itemsInColumn < rows) {
+    while (itemsInColumn < ROWS) {
       if (i === 0) {
         firstLastClass = 'firstInARow';
-      } else if (i === rows - 1) {
+      } else if (i === ROWS - 1) {
         firstLastClass = 'lastInARow';
       }
       $('#column-' + i).append('<div class="cell" id="cell-' + itemsInColumn + i + '"></div>');
@@ -65,19 +65,20 @@ function createView() {
 }
 
 function spin(type) {
-  var resultToView = generateSpinResult();
+  let resultToView = generateSpinResult();
 
+  // change random results with test values if any
   if (testModeBlockShow && testMatrix.length && type === 'result') {
-    for (var k = 0; k < testMatrix.length; k++) {
-      if (testMatrix[k].row >= 0) {
-        resultToView[testMatrix[k].row][k] = testMatrix[k].cellValue;
+    for (let i = 0; i < testMatrix.length; i++) {
+      if (testMatrix[i].row >= 0) {
+        resultToView[testMatrix[i].row][i] = testMatrix[i].cellValue;
       }
     }
   }
 
-  for (var i = 0; i < resultToView.length; i++) {
-    for (var j = 0; j < resultToView[i].length; j++) {
-      var currentCell = $('#cell-' + i + j);
+  for (let i = 0; i < resultToView.length; i++) {
+    for (let j = 0; j < resultToView[i].length; j++) {
+      let currentCell = $('#cell-' + i + j);
       currentCell.removeClass('win-row');
       // where 141 -- image width, 20 -- double sprite margin, 10 -- first margin in sprite
       currentCell.css('background-position-x', -((141 * resultToView[i][j]) + (20 * resultToView[i][j]) + 10))
@@ -85,13 +86,13 @@ function spin(type) {
   }
 
   if (type === 'result') {
-    changeElementsState(true);
-    $('#win-sum-text').text('').addClass('blinking-text');
+    setDisabledStateOnInputs(true);
     $('.column').addClass('column-animated');
     addSubtractMoneyAmount(-1);
-    var timeout = setTimeout(function() {
-      calculateWin(resultToView, timeout)
-    }, spinDuration);
+    $('#win-sum-text').text('').removeClass('blinking-text');
+    let timeout = setTimeout(function() {
+      endSpin(resultToView, timeout)
+    }, SPIN_DURATION);
   }
 }
 
@@ -102,30 +103,30 @@ function threeInARowCheck(row) {
 }
 
 function styleRowOnWin(winRow) {
-  for (var i = 0; i < cols; i ++) {
+  for (let i = 0; i < COLS; i ++) {
     $('#cell-' + winRow + i).addClass('win-row');
   }
 }
 
 function changeMoneyAmount() {
-  var moneyInputElement = $('#money-input');
-  moneyInputElement.on('change', function() {
-    var money = parseInt(moneyInputElement.val());
-    if (money > 0) $('#start-spin').attr('disabled', false);
+  let moneyInputElement = $('#money-input');
+  let money = 0;
+  moneyInputElement.change(function() {
+    money = parseInt(moneyInputElement.val());
+    $('#start-spin').attr('disabled', money < 0);
   });
 }
 
 function addSubtractMoneyAmount(sum) {
-  var moneyInputElement = $('#money-input');
-  var moneyAmount = parseInt(moneyInputElement.val());
+  let moneyInputElement = $('#money-input');
+  let moneyAmount = parseInt(moneyInputElement.val());
   moneyInputElement.val((moneyAmount + sum).toString());
 }
 
-function calculateWin(resultMatrix, timeout) {
-  var stakeRow = $('#stake-row').val();
-  var winSum = 0;
-
-  var threeInARow = threeInARowCheck(resultMatrix[stakeRow]);
+function calculateWin(resultMatrix) {
+  let stakeRow = $('#stake-row').val();
+  let winSum = 0;
+  let threeInARow = threeInARowCheck(resultMatrix[stakeRow]);
 
   if (threeInARow !== -1) {
     switch (threeInARow) {
@@ -156,12 +157,12 @@ function calculateWin(resultMatrix, timeout) {
     }
   } else {
 
-    var cherryAndSeven = resultMatrix[stakeRow].every(function(element) {
-      return ![0, 1, 3].includes(element)
+    let cherryAndSeven = resultMatrix[stakeRow].every(function(element) {
+      return ![0, 1, 3].includes(element); // only cherry and 7 in row
     });
 
-    var bars = resultMatrix[stakeRow].every(function(element) {
-      return ![2,4].includes(element)
+    let bars = resultMatrix[stakeRow].every(function(element) {
+      return ![2,4].includes(element); // only bars in row
     });
 
     if (cherryAndSeven) {
@@ -172,12 +173,18 @@ function calculateWin(resultMatrix, timeout) {
       winSum = 0;
     }
   }
+  return winSum;
+}
+
+function endSpin(resultMatrix, timeout) {
+  let stakeRow = $('#stake-row').val();
+  let winSum = calculateWin(resultMatrix);
 
   $('.column').each(function(index) {
     (function(that, i) {
       setTimeout(function() {
         $(that).removeClass('column-animated');
-      }, stopDelay * i);
+      }, STOP_DELAY * i);
     })(this, index);
   });
 
@@ -187,13 +194,12 @@ function calculateWin(resultMatrix, timeout) {
       addSubtractMoneyAmount(winSum);
       $('#win-sum-text').text(winSum).addClass('blinking-text');
     }
-    changeElementsState(false);
+    setDisabledStateOnInputs(false);
     clearTimeout(timeout);
-  }, stopDelay * cols - 1);
-
+  }, STOP_DELAY * COLS - 1);
 }
 
-function changeElementsState(state) {
+function setDisabledStateOnInputs(state) {
   $('#start-spin').attr('disabled', state);
   $('#money-input').attr('disabled', state);
   $('#stake-row').attr('disabled', state);
@@ -203,14 +209,14 @@ function changeElementsState(state) {
 $(document).ready(function() {
   createTestModeView();
 
-  $('#generate-test').on('click', function() {
+  $('#generate-test').click(function() {
     generateTestMatrix();
     $('#test-mode-sign').removeClass('hide');
   });
 
-  $('#test-mode').on('change', function(event) {
-    var hiddenFieldElement = $('#hidden-field');
-    var testModeSign = $('#test-mode-sign');
+  $('#test-mode').change(function(event) {
+    let hiddenFieldElement = $('#hidden-field');
+    let testModeSign = $('#test-mode-sign');
     if ($(event.target).is(':checked')) {
       hiddenFieldElement.removeClass('hide');
       testModeBlockShow = true;
@@ -222,9 +228,7 @@ $(document).ready(function() {
     }
   });
 
-  $('#start-spin').on('click', function() {
-    spin('result');
-  });
+  $('#start-spin').click(function() {spin('result')});
 
   changeMoneyAmount();
   createView();

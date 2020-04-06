@@ -25,14 +25,20 @@
     border: solid transparent;
     border-width: 2px 0;
 }
+.cell.firstInARow {
+    border-left: 2px solid transparent;
+}
+.cell.lastInARow {
+    border-right: 2px solid transparent;
+}
 .win-row {
     border-color: red;
 }
 .win-row.firstInARow {
-    border-left: 2px solid red;
+    border-left-color: red;
 }
 .win-row.lastInARow {
-    border-right: 2px solid red;
+    border-right-color: red;
 }
 .blinking-text {
     animation: blinkingTextAnimation 0.5s infinite;
