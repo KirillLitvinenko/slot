@@ -46,22 +46,26 @@ function generateSpinResult() {
 }
 
 function createView() {
+  let generatedHtml = '';
+  let generatedColumnsHtml = '';
+
   for (let i = 0; i < COLS; i++) {
     let itemsInColumn = 0;
     let firstLastClass = '';
 
-    $('#rotate').append('<div class="column" id="column-' + i + '"></div>');
     while (itemsInColumn < ROWS) {
       if (i === 0) {
         firstLastClass = 'firstInARow';
       } else if (i === ROWS - 1) {
         firstLastClass = 'lastInARow';
       }
-      $('#column-' + i).append('<div class="cell" id="cell-' + itemsInColumn + i + '"></div>');
-      $('#cell-' + itemsInColumn + i).addClass(firstLastClass);
+      generatedHtml += ('<div class="cell ' + firstLastClass + '" id="cell-' + itemsInColumn + i + '"></div>');
       itemsInColumn++;
     }
+    generatedColumnsHtml += ('<div class="column" id="column-' + i + '">' + generatedHtml + '</div>');
+    generatedHtml = '';
   }
+  $('#rotate').append(generatedColumnsHtml);
 }
 
 function spin(type) {
@@ -96,6 +100,7 @@ function spin(type) {
   }
 }
 
+// check if win combination is three same items and return item value if so ro -1 if not
 function threeInARowCheck(row) {
   return row.every(function(element) {
     return element === row[0];
@@ -108,6 +113,7 @@ function styleRowOnWin(winRow) {
   }
 }
 
+// manual changing amount of money
 function changeMoneyAmount() {
   let moneyInputElement = $('#money-input');
   let money = 0;
